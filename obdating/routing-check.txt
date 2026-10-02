@@ -1,0 +1,1 @@
+temporary check: the user site serves this lowercase path
