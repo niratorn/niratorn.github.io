@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>ไม่พบหน้านี้</title>
+<!--
+  niratorn.github.io/404.html
+
+  GitHub Pages ส่งไฟล์นี้ทุกครั้งที่ไม่พบที่อยู่ใต้ niratorn.github.io
+  ที่อยู่ของ GitHub Pages แยกตัวพิมพ์เล็กใหญ่ จึงเปิด /obdating หรือ /OBDATING ไม่ได้
+  สคริปต์ท้ายหน้านี้ดูส่วนแรกของที่อยู่ ถ้าสะกดตรงกับชื่อเว็บในรายการ SITES
+  โดยต่างกันแค่ตัวพิมพ์เล็กใหญ่ ก็พาไปที่อยู่ที่ถูกต้อง ที่อยู่อื่นทั้งหมดขึ้นข้อความ "ไม่พบหน้านี้"
+
+  แก้ไฟล์นี้แล้วให้รัน node tests/redirect.test.js และ python tests/e2e.py ทุกครั้ง
+-->
+<style>
+  :root { color-scheme: light dark; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: flex; align-items: center; justify-content: center;
+    box-sizing: border-box; padding: 24px;
+    font-family: system-ui, -apple-system, "Segoe UI", "Leelawadee UI", "Noto Sans Thai", Tahoma, sans-serif;
+    line-height: 1.6;
+    background: Canvas; color: CanvasText;
+  }
+  main { max-width: 30rem; text-align: center; }
+  h1 { font-size: 1.35rem; margin: 0 0 .5rem; }
+  p { margin: .25rem 0; }
+  .en { opacity: .7; font-size: .9rem; }
+  /* ซ่อนทั้งสองข้อความไว้ก่อน สคริปต์เป็นผู้เลือกว่าจะแสดงอันไหน
+     คนที่ถูกพาไปหน้าที่ถูกต้องจึงไม่เห็นคำว่า "ไม่พบหน้านี้" แวบขึ้นมา */
+  #notfound, #moving { display: none; }
+  html.notfound #notfound, html.moving #moving { display: block; }
+</style>
+<noscript><style>#notfound { display: block; }</style></noscript>
+</head>
+<body>
+<main>
+  <div id="notfound">
+    <h1>ไม่พบหน้านี้</h1>
+    <p>ที่อยู่เว็บอาจพิมพ์ผิด กรุณาตรวจตัวสะกดอีกครั้ง</p>
+    <p class="en">Page not found. Please check the address.</p>
+  </div>
+  <div id="moving">
+    <h1>กำลังเปิดหน้าที่ถูกต้อง</h1>
+    <p>ถ้าหน้าไม่เปลี่ยนเอง <a id="go">แตะที่นี่</a></p>
+  </div>
+</main>
+<script>
+(function () {
+  'use strict';
+
+  // ชื่อโฟลเดอร์ของเว็บที่อยู่ใต้ niratorn.github.io หนึ่งชื่อต่อหนึ่ง repo
+  // ต้องสะกดตัวพิมพ์เล็กใหญ่ให้ตรงกับชื่อ repo ทุกตัวอักษร
+  // เพิ่มเว็บใหม่ได้โดยเติมชื่อในรายการนี้ เช่น ['OBdating', 'AnotherApp']
+  var SITES = ['OBdating'];
+
+  // คืนที่อยู่ที่ถูกต้อง หรือ null เมื่อไม่ต้องพาไปไหน
+  function correctedPath(pathname) {
+    var m = /^\/([^\/]+)(\/[\s\S]*)?$/.exec(pathname);
+    if (!m) { return null; }
+    var typed = m[1];
+    for (var i = 0; i < SITES.length; i++) {
+      var real = SITES[i];
+      // สะกดตรงทุกตัวอักษรแล้วยังมาถึงหน้านี้ แปลว่าไฟล์นั้นไม่มีจริง
+      // ต้องไม่พาไปซ้ำ ไม่เช่นนั้นหน้าจะวนโหลดไม่รู้จบ
+      if (typed !== real && typed.toLowerCase() === real.toLowerCase()) {
+        return '/' + real + (m[2] || '/');
+      }
+    }
+    return null;
+  }
+
+  var root = document.documentElement;
+  var fixed = correctedPath(location.pathname);
+  if (!fixed) { root.className = 'notfound'; return; }
+
+  // คงส่วน ?... และ #... ไว้ตามที่ผู้ใช้เปิดมา
+  var target = fixed + location.search + location.hash;
+  document.getElementById('go').setAttribute('href', target);
+  // เน็ตช้าจนหน้ายังไม่เปลี่ยน จึงค่อยขึ้นข้อความพร้อมลิงก์ให้กดเอง
+  setTimeout(function () { root.className = 'moving'; }, 1500);
+  // replace ทำให้ปุ่มย้อนกลับไม่พากลับมาที่อยู่ผิดอีก
+  location.replace(target);
+})();
+</script>
+</body>
+</html>
